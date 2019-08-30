@@ -19,4 +19,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::resource('news-panel', 'NewsController');
+Route::resource('news', 'NewsController');

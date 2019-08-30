@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    <a href="/news-panel" class="btn btn-primary">News...</a>
+                    <a href="/news" class="btn btn-primary">News...</a>
                 </div>
             </div>
         </div>

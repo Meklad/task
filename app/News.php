@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Gallery;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class News extends Model
@@ -43,5 +44,13 @@ class News extends Model
     public function getImageFullPathAttribute()
     {
         return '/img/featured/' . $this->featured_image;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCreatedAtAttribute()
+    {
+        return  Carbon::parse($this->attributes['created_at'])->diffForHumans();
     }
 }
