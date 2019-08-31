@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\News;
+use App\Gallery;
 use App\Traits\UploadTrait;
 use Illuminate\Http\Request;
 
@@ -27,12 +28,17 @@ class NewsRepository
         $news->body = $request->body;
         $news->user_id = auth()->user()->id;
 
+
         if ($request->has('featured_image')) {
             $news->featured_image = $this->uploadOne($request);
         }
 
         if(!$news->save()) {
         	return false;
+        }
+
+        if($request->has('gallery')) {
+            $this->storeGallery($this->uploadToGallery($request), $news->id);    
         }
 
         return true;
@@ -79,5 +85,19 @@ class NewsRepository
         }
 
         return true;
+    }
+
+    public function storeGallery($gallery, $news_id)
+    {
+        foreach ($gallery as $name) {
+
+            \Log::info(['name' => $name]);
+            Gallery::insert([
+                'path' => $name,
+                'news_id' => $news_id,
+                'created_at' => \Carbon\Carbon::now(),
+                'updated_at' => \Carbon\Carbon::now()
+            ]);
+        }
     }
 }

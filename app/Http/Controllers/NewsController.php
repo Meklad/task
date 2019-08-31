@@ -9,9 +9,13 @@ use App\Http\Requests\{
     CreateNewsRequest,
     UpdateNewsRequest
 };
+use App\Traits\UploadTrait;
+
 
 class NewsController extends Controller
 {
+    use UploadTrait;
+    
     /**
      * @var $news
      */
