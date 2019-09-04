@@ -5,7 +5,10 @@ namespace App\Repositories;
 use App\News;
 use App\Gallery;
 use App\Traits\UploadTrait;
-use Illuminate\Http\Request;
+use App\Http\Requests\{
+    CreateNewsRequest,
+    UpdateNewsRequest
+};
 
 /**
  * News Repository...
@@ -20,7 +23,7 @@ class NewsRepository
 	 * @param Request $reques
 	 * @return bool
 	 */
-	public function create(Request $request) : bool
+	public function create(CreateNewsRequest $request) : bool
 	{
 		$news = new News;
         $news->title = $request->title;
@@ -51,7 +54,7 @@ class NewsRepository
 	 * @param \App\News $news
 	 * @return bool
 	 */
-	public function update(Request $request, News $news) : bool
+	public function update(UpdateNewsRequest $request, News $news) : bool
 	{
         $news->title = $request->title;
         $news->description = $request->description;
