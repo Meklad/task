@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Factory as Faker;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class NewsTableSeeder extends Seeder
@@ -19,7 +20,9 @@ class NewsTableSeeder extends Seeder
 	            'description' => $faker->sentence(4),
 	            'body' => $faker->paragraph(20),
 	            'featured_image' => 'seed.jpg',
-	            'user_id' => 1
+	            'user_id' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
 	        ]);
 		}
     }

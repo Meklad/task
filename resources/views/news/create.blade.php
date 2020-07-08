@@ -43,6 +43,7 @@
                         <input type="file" name="featured_image" class="form-control-file" id="featured_image">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="/news" class="btn btn-danger">Back</a>
                     </form>
                 </div>
             </div>

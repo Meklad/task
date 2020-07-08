@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@section('title')
+  {{ $news->title }}
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
@@ -52,6 +56,7 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="/news" class="btn btn-danger">Back</a>
                     </form>
                 </div>
             </div>

@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\News;
-use App\Traits\UploadTrait;
 use Illuminate\Http\Request;
+use App\Repositories\NewsRepository;
+use App\Http\Requests\{
+    CreateNewsRequest,
+    UpdateNewsRequest
+};
 
 class NewsController extends Controller
 {
-    use UploadTrait;
+    /**
+     * @var $news
+     */
+    public $news;
 
-    public function __construct()
+    public function __construct(NewsRepository $news_repository)
     {
         $this->middleware('auth');
+        $this->_news = $news_repository;
     }
 
     /**
@@ -40,39 +48,18 @@ class NewsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\CreateNewsRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateNewsRequest $request)
     {
-        $validator = \Validator::make($request->all(), [
-            'title'              =>  'required',
-            'description'        =>  'required',
-            'body'               =>  'required',
-            'featured_image'     =>  'required|image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        $stateOfRecord = $this->_news->create($request);
 
-        if ($validator->fails()) {
-            return redirect('news/create')
-                        ->withErrors($validator)
-                        ->withInput();
+        if($stateOfRecord == false) {
+            \Session::flash('error_message', 'Error While Updateing This Record.');
+            return redirect()->back();
         }
 
-        $news = new News;
-        $news->title = $request->title;
-        $news->description = $request->description;
-        $news->body = $request->body;
-        $news->user_id = auth()->user()->id;
-
-        if ($request->has('featured_image')) {
-            $news->featured_image = $this->uploadOne($request);
-        }
-
-        if(!$news->save()) {
-            return redirect('news/create')
-                        ->withErrors($validator)
-                        ->withInput();
-        }
         \Session::flash('success_message', 'News Created Successfully.');
 
         return redirect('news');
@@ -103,40 +90,19 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UpdateNewsRequest  $request
      * @param  \App\News  $news
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, News $news)
+    public function update(UpdateNewsRequest $request, News $news)
     {
-        $validator = \Validator::make($request->all(), [
-            'title'              =>  'required',
-            'description'        =>  'required',
-            'body'               =>  'required',
-            'featured_image'     =>  'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        $stateOfRecord = $this->_news->update($request, $news);
 
-        if ($validator->fails()) {
-            return redirect('news/updated')
-                        ->withErrors($validator)
-                        ->withInput();
+        if($stateOfRecord == false) {
+            \Session::flash('error_message', 'Error While Updateing This Record.');
+            return redirect()->back();
         }
 
-        $news->title = $request->title;
-        $news->description = $request->description;
-        $news->body = $request->body;
-        $news->user_id = auth()->user()->id;
-
-        if ($request->has('featured_image')) {
-            unlink(public_path('img/featured/') . $news->featured_image);
-            $news->featured_image = $this->uploadOne($request);
-        }
-
-        if(!$news->save()) {
-            return redirect('news/update')
-                        ->withErrors($validator)
-                        ->withInput();
-        }
         \Session::flash('success_message', 'News Updated Successfully.');
 
         return redirect('news');
@@ -150,9 +116,12 @@ class NewsController extends Controller
      */
     public function destroy(News $news)
     {
-        unlink(public_path('img/featured/') . $news->featured_image);
-        
-        $news->delete();
+        $stateOfRecord = $this->_news->delete($news);
+
+        if($stateOfRecord == false) {
+            \Session::flash('error_message', 'Error While Deleting This Record.');
+            return redirect()->back();
+        }
 
         \Session::flash('success_message', 'News Deleted Successfully.');
 

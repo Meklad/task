@@ -17,7 +17,7 @@ class CreateNewsTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('description');
-            $table->string('body');
+            $table->text('body');
             $table->string('featured_image');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')
